@@ -118,6 +118,25 @@ export = {
 			);
 		}
 
+		const myPerms = channel
+			.permissionsFor(await interaction.guild.members.fetchMe(), true)
+			.serialize(true);
+		if (
+			!myPerms.SendMessages ||
+			!myPerms.EmbedLinks ||
+			!myPerms.ManageMessages ||
+			!myPerms.ViewChannel ||
+			!myPerms.UseExternalEmojis
+		) {
+			return await interaction.editReply(
+				getErrorEmbed(
+					interaction as Interaction,
+					name,
+					`❌ I don't have the correct permissions in <#${channel.id}>!\n**I Need:**\n* \`View Channel\`\n* \`Send Messages\`\n* \`Embed Links\`\n* \`Manage Messages\`\n* \`Use External Emojis\``
+				)
+			);
+		}
+
 		const rating = interaction.options.get("rating", true).value as number;
 		const comment = interaction.options.get("comment", true)
 			.value as string;

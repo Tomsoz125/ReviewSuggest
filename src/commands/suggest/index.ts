@@ -110,6 +110,29 @@ export = {
 			);
 		}
 
+		const myPerms = channel
+			.permissionsFor(await interaction.guild.members.fetchMe(), true)
+			.serialize(true);
+		if (
+			!myPerms.SendMessages ||
+			!myPerms.EmbedLinks ||
+			!myPerms.ManageThreads ||
+			!myPerms.CreatePublicThreads ||
+			!myPerms.SendMessagesInThreads ||
+			!myPerms.ManageMessages ||
+			!myPerms.ViewChannel ||
+			!myPerms.AddReactions ||
+			!myPerms.UseExternalEmojis
+		) {
+			return await interaction.editReply(
+				getErrorEmbed(
+					interaction as Interaction,
+					name,
+					`❌ I don't have the correct permissions in <#${channel.id}>!\n**I Need:**\n* \`Add Reations\`\n* \`Use External Emojis\`\n* \`View Channel\`\n* \`Send Messages\`\n* \`Embed Links\`\n* \`Manage Threads\`\n* \`Manage Messages\`\n* \`Create Public Threads\`\n* \`Send Messages in Threads\``
+				)
+			);
+		}
+
 		const suggestion = interaction.options.get("suggestion", true)
 			.value as string;
 
