@@ -7,32 +7,24 @@ import {
 	Interaction,
 	SlashCommandBuilder
 } from "discord.js";
-import { config } from "../../config";
-import { db } from "../../db";
-import { CommandObject } from "../../typings";
-import getErrorEmbed from "../utils/embeds/getErrorEmbed";
-import getSuccessEmbed from "../utils/embeds/getSuccessEmbed";
-import getUnexpectedErrorEmbed from "../utils/embeds/getUnexpectedErrorEmbed";
-import getCommandLink from "../utils/getCommandLink";
+import { config } from "../../../config";
+import { db } from "../../../db";
+import { CommandObject } from "../../../typings";
+import getErrorEmbed from "../../utils/embeds/getErrorEmbed";
+import getSuccessEmbed from "../../utils/embeds/getSuccessEmbed";
+import getUnexpectedErrorEmbed from "../../utils/embeds/getUnexpectedErrorEmbed";
+import getCommandLink from "../../utils/getCommandLink";
 
 const name = "Suggest";
 export = {
 	data: new SlashCommandBuilder()
-		.setName("review")
-		.setDescription("Creates a review for the server")
+		.setName("suggest")
+		.setDescription("Creates a suggestion for the server")
 		.setDMPermission(true)
-		.addNumberOption((o) =>
-			o
-				.setName("rating")
-				.setDescription("How many stars would you give the server")
-				.setMaxValue(5)
-				.setMinValue(0)
-				.setRequired(true)
-		)
 		.addStringOption((o) =>
 			o
-				.setName("comment")
-				.setDescription("Why you have chosen your rating")
+				.setName("suggestion")
+				.setDescription("The thing you want to suggest")
 				.setRequired(true)
 		),
 	botPermissions: [],
@@ -67,7 +59,7 @@ export = {
 					`❌ This server is not configured! Run ${await getCommandLink(
 						{
 							client,
-							command: "/config review",
+							command: "/config suggest",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -75,19 +67,19 @@ export = {
 			);
 		}
 
-		if (!guildConfig.reviewChannel) {
+		if (!guildConfig.suggestionChannel) {
 			return await interaction.editReply(
 				getErrorEmbed(
 					interaction as Interaction,
 					name,
 					`❌ ${await getCommandLink({
 						client,
-						command: "/review",
+						command: "/suggest",
 						guild: interaction.guild
 					})} is not configured on this server!\nRun ${await getCommandLink(
 						{
 							client,
-							command: "/config review",
+							command: "/config suggest",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -96,7 +88,7 @@ export = {
 		}
 
 		const channel = await interaction.guild.channels.fetch(
-			guildConfig.reviewChannel
+			guildConfig.suggestionChannel
 		);
 		if (!channel || channel.type !== ChannelType.GuildText) {
 			return await interaction.editReply(
@@ -105,12 +97,12 @@ export = {
 					name,
 					`❌ ${await getCommandLink({
 						client,
-						command: "/review",
+						command: "/suggest",
 						guild: interaction.guild
 					})} is not properly configured on this server!\nRun ${await getCommandLink(
 						{
 							client,
-							command: "/config review",
+							command: "/config suggest",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -118,36 +110,30 @@ export = {
 			);
 		}
 
-		const rating = interaction.options.get("rating", true).value as number;
-		const comment = interaction.options.get("comment", true)
+		const suggestion = interaction.options.get("suggestion", true)
 			.value as string;
-		let ratingStr = ``;
-		for (let i = 0; i <= rating; i++) {
-			ratingStr += `⭐`;
-		}
 
 		const embed = new EmbedBuilder()
-			.setTitle("New Review")
-			.setDescription(comment)
-			.addFields({ name: "Rating", value: ratingStr })
+			.setTitle("Suggestion - Vote Below")
+			.setDescription(
+				`**Suggestion: **\`${suggestion}\`\n**Suggested By:** <@${interaction.user.id}>`
+			)
 			.setFooter({
-				text: `Review by ${interaction.user.username}`,
+				text: `Suggested by ${interaction.user.username}`,
 				iconURL: interaction.user.displayAvatarURL()
 			})
-			.setThumbnail(interaction.guild.iconURL())
-			.setColor(
-				(rating <= 2
-					? config.colours.review_bad
-					: rating === 3
-					? config.colours.review_mid
-					: config.colours.review_good) as ColorResolvable
-			);
-		await channel.send({ embeds: [embed] });
+			.setColor(config.colours.suggest as ColorResolvable);
+		const msg = await channel.send({ embeds: [embed] });
+		await msg.react("👍");
+		await msg.react("👎");
+		await msg.startThread({
+			name: `Suggestion by ${interaction.user.username}`
+		});
 		await interaction.editReply(
 			getSuccessEmbed(
 				interaction as Interaction,
 				name,
-				`Successfully posted your review to <#${channel.id}>!`
+				`Successfully posted your suggestion to <#${channel.id}>!`
 			)
 		);
 	}
