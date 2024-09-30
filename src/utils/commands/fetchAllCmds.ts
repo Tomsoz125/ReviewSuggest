@@ -21,24 +21,30 @@ export = () => {
 		}
 
 		const commandsPath = path.join(foldersPath, folder);
-		const commandFiles = fs
-			.readdirSync(commandsPath)
-			.filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
-
-		if (
-			!commandFiles.includes("index.ts") &&
-			!commandFiles.includes("index.js")
-		) {
-			console.log(
-				`[WARNING] The command at ${commandsPath} is missing a required index.ts file.`
-			);
-		} else {
-			let command = require(path.join(
-				commandsPath,
-				commandFiles.includes("index.ts") ? "index.ts" : "index.js"
-			)) as CommandObject;
+		if (commandsPath.endsWith(".ts") || commandsPath.endsWith(".js")) {
+			let command = require(path.join(commandsPath)) as CommandObject;
 			command.data = command.data.setDMPermission(false);
 			commands.push(command);
+		} else {
+			const commandFiles = fs
+				.readdirSync(commandsPath)
+				.filter((file) => file.endsWith(".ts") || file.endsWith(".js"));
+
+			if (
+				!commandFiles.includes("index.ts") &&
+				!commandFiles.includes("index.js")
+			) {
+				console.log(
+					`[WARNING] The command at ${commandsPath} is missing a required index.ts file.`
+				);
+			} else {
+				let command = require(path.join(
+					commandsPath,
+					commandFiles.includes("index.ts") ? "index.ts" : "index.js"
+				)) as CommandObject;
+				command.data = command.data.setDMPermission(false);
+				commands.push(command);
+			}
 		}
 	}
 
