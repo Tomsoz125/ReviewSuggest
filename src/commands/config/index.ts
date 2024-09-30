@@ -1,4 +1,8 @@
-import { PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import {
+	ChannelType,
+	PermissionFlagsBits,
+	SlashCommandBuilder
+} from "discord.js";
 import { CommandObject } from "typings";
 
 export = {
@@ -7,15 +11,38 @@ export = {
 		.setDescription("Commands to configure the bot")
 		.setDMPermission(false)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
-		.addSubcommand((subcommand) =>
+		.addSubcommandGroup((subcommand) =>
 			subcommand
 				.setName("suggest")
 				.setDescription("Edit the suggestion channel")
-				.addChannelOption((o) =>
-					o
+				.addSubcommand((s) =>
+					s
 						.setName("channel")
 						.setDescription(
-							"The channel to post all new suggestions in"
+							"Set channel to post all new suggestions in"
+						)
+						.addChannelOption((o) =>
+							o
+								.addChannelTypes(ChannelType.GuildText)
+								.setName("channel")
+								.setDescription(
+									"The channel you want suggestions to be posted in"
+								)
+						)
+				)
+				.addSubcommand((s) =>
+					s
+						.setName("threads")
+						.setDescription(
+							"Whether to use threads with suggestions"
+						)
+						.addBooleanOption((o) =>
+							o
+								.setName("threads")
+								.setDescription(
+									"Whether to use threads with suggestions"
+								)
+								.setRequired(true)
 						)
 				)
 		)

@@ -6,10 +6,10 @@ import {
 	CommandInteractionOption,
 	Interaction
 } from "discord.js";
-import { db } from "../../../db";
-import getErrorEmbed from "../../utils/embeds/getErrorEmbed";
-import getSuccessEmbed from "../../utils/embeds/getSuccessEmbed";
-import getUnexpectedErrorEmbed from "../../utils/embeds/getUnexpectedErrorEmbed";
+import { db } from "../../../../db";
+import getErrorEmbed from "../../../utils/embeds/getErrorEmbed";
+import getSuccessEmbed from "../../../utils/embeds/getSuccessEmbed";
+import getUnexpectedErrorEmbed from "../../../utils/embeds/getUnexpectedErrorEmbed";
 let name = "Suggest Config";
 
 export = {

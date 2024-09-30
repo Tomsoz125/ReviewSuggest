@@ -17,4 +17,5 @@ model GuildConfig {
     id String @id
     suggestionChannel String?
     reviewChannel String?
+    threads Boolean @default(true)
 }

@@ -59,7 +59,7 @@ export = {
 					`❌ This server is not configured! Run ${await getCommandLink(
 						{
 							client,
-							command: "/config suggest",
+							command: "/config suggest channel",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -79,7 +79,7 @@ export = {
 					})} is not configured on this server!\nRun ${await getCommandLink(
 						{
 							client,
-							command: "/config suggest",
+							command: "/config suggest channel",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -102,7 +102,7 @@ export = {
 					})} is not properly configured on this server!\nRun ${await getCommandLink(
 						{
 							client,
-							command: "/config suggest",
+							command: "/config suggest channel",
 							guild: interaction.guild
 						}
 					)} to set it up!`
@@ -149,9 +149,11 @@ export = {
 		const msg = await channel.send({ embeds: [embed] });
 		await msg.react("👍");
 		await msg.react("👎");
-		await msg.startThread({
-			name: `Suggestion by ${interaction.user.username}`
-		});
+		if (guildConfig.threads) {
+			await msg.startThread({
+				name: `Suggestion by ${interaction.user.username}`
+			});
+		}
 		await interaction.editReply(
 			getSuccessEmbed(
 				interaction as Interaction,
