@@ -41,49 +41,56 @@ export = {
 			);
 		}
 
-		const channelOption = interaction.options.get("channel")!.channel!;
-		const channel = await interaction.guild.channels.fetch(
-			channelOption.id
-		);
-		if (!channel) {
-			return await interaction.editReply(
-				getErrorEmbed(
-					interaction as Interaction,
-					name,
-					`❌ I couldn't find the channel you mentioned!`
-				)
+		const channelOption = interaction.options.get("channel");
+		if (channelOption && channelOption.channel) {
+			const channel = await interaction.guild.channels.fetch(
+				channelOption.channel.id
 			);
-		}
-		if (channel.type !== ChannelType.GuildText) {
-			return await interaction.editReply(
-				getErrorEmbed(
-					interaction as Interaction,
-					name,
-					`❌ The suggestion channel must be a normal text channel!`
-				)
-			);
-		}
-		const myPerms = channel
-			.permissionsFor(await interaction.guild.members.fetchMe(), true)
-			.serialize(true);
-		if (
-			!myPerms.SendMessages ||
-			!myPerms.EmbedLinks ||
-			!myPerms.ManageThreads ||
-			!myPerms.CreatePublicThreads ||
-			!myPerms.SendMessagesInThreads ||
-			!myPerms.ManageMessages ||
-			!myPerms.ViewChannel ||
-			!myPerms.AddReactions ||
-			!myPerms.UseExternalEmojis
-		) {
-			return await interaction.editReply(
-				getErrorEmbed(
-					interaction as Interaction,
-					name,
-					`❌ I don't have the correct permissions in <#${channel.id}>!\n**I Need:**\n* \`Add Reations\`\n* \`Use External Emojis\`\n* \`View Channel\`\n* \`Send Messages\`\n* \`Embed Links\`\n* \`Manage Threads\`\n* \`Manage Messages\`\n* \`Create Public Threads\`\n* \`Send Messages in Threads\``
-				)
-			);
+
+			if (!channel) {
+				return await interaction.editReply(
+					getErrorEmbed(
+						interaction as Interaction,
+						name,
+						`❌ I couldn't find the channel you mentioned!`
+					)
+				);
+			}
+			if (channel.type !== ChannelType.GuildText) {
+				return await interaction.editReply(
+					getErrorEmbed(
+						interaction as Interaction,
+						name,
+						`❌ The suggestion channel must be a normal text channel!`
+					)
+				);
+			}
+			const myPerms = channel
+				.permissionsFor(await interaction.guild.members.fetchMe(), true)
+				.serialize(true);
+			if (
+				!myPerms.SendMessages ||
+				!myPerms.EmbedLinks ||
+				!myPerms.ManageThreads ||
+				!myPerms.CreatePublicThreads ||
+				!myPerms.SendMessagesInThreads ||
+				!myPerms.ManageMessages ||
+				!myPerms.ViewChannel ||
+				!myPerms.AddReactions ||
+				!myPerms.UseExternalEmojis
+			) {
+				return await interaction.editReply(
+					getErrorEmbed(
+						interaction as Interaction,
+						name,
+						`❌ I don't have the correct permissions in <#${channel.id}>!\n**I Need:**\n* \`Add Reations\`\n* \`Use External Emojis\`\n* \`View Channel\`\n* \`Send Messages\`\n* \`Embed Links\`\n* \`Manage Threads\`\n* \`Manage Messages\`\n* \`Create Public Threads\`\n* \`Send Messages in Threads\``
+					)
+				);
+			}
+
+			var channelId: any = channel.id;
+		} else {
+			var channelId: any = null;
 		}
 
 		if (!config) {
@@ -91,7 +98,7 @@ export = {
 				await db.guildConfig.create({
 					data: {
 						id: interaction.guildId,
-						suggestionChannel: channel.id
+						suggestionChannel: channelId
 					}
 				});
 			} catch (e) {
@@ -106,7 +113,7 @@ export = {
 						id: interaction.guildId
 					},
 					data: {
-						suggestionChannel: channel.id
+						suggestionChannel: channelId
 					}
 				});
 			} catch (e) {
@@ -120,7 +127,9 @@ export = {
 			getSuccessEmbed(
 				interaction as Interaction,
 				name,
-				`👍 Sucessfully set the suggestions channel to <#${channel.id}>!`
+				channelId
+					? `👍 Sucessfully set the suggestions channel to <#${channelId}>!`
+					: `👍 Sucessfully cleared the suggestions channel!`
 			)
 		);
 	}

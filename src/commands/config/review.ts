@@ -41,10 +41,10 @@ export = {
 			);
 		}
 
-		const channelOption = interaction.options.get("channel")!.channel;
-		if (channelOption) {
+		const channelOption = interaction.options.get("channel");
+		if (channelOption && channelOption.channel) {
 			const channel = await interaction.guild.channels.fetch(
-				channelOption.id
+				channelOption.channel.id
 			);
 			if (!channel) {
 				return await interaction.editReply(
