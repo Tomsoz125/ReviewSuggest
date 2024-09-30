@@ -47,7 +47,7 @@ export interface ContextMenuObject {
 	data: ContextMenuCommandBuilder;
 	deferred?: boolean = true;
 	botPermissions?: bigint[] = [];
-	enabled?: keyof typeof DBGuild | boolean;
+	enabled?: boolean;
 	callback: (
 		client: Client,
 		interaction: ContextMenuCommandInteraction
