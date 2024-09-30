@@ -21,7 +21,8 @@ export = async ({
 		command.split(" ").length > 0
 			? command.split(" ")[0].slice(1)
 			: command.slice(1);
-	const commands = await guild.commands.fetch();
+	if (!client.application) return command;
+	const commands = await client.application.commands.fetch();
 	const cmds = commands.filter((cmd) => cmd.name === commandName);
 	return cmds.size > 0 ? `<${command}:${cmds.at(0)!.id}>` : command;
 };

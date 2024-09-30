@@ -7,9 +7,7 @@ export = async (client: Client) => {
 			const rest = new REST().setToken(process.env.BOT_TOKEN!);
 
 			try {
-				console.log(
-					`Started refreshing application (/) commands for guild ${g[0]}.`
-				);
+				console.log(`Started refreshing application (/) commands`);
 				let cmds = [];
 				const commands = await fetchAllCmds();
 
@@ -19,14 +17,14 @@ export = async (client: Client) => {
 				}
 
 				const data: any = await rest.put(
-					Routes.applicationGuildCommands(client.user!.id, g[0]),
+					Routes.applicationCommands(client.user!.id),
 					{
 						body: cmds
 					}
 				);
 
 				console.log(
-					`Successfully reloaded ${data.length} application (/) commands for guild ${g[0]}.`
+					`Successfully reloaded ${data.length} application (/) commands`
 				);
 			} catch (error) {
 				// And of course, make sure you catch and log any errors!
