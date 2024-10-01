@@ -144,7 +144,7 @@ export = {
 		for (let i = 0; i < rating; i++) {
 			ratingStr += `<:reviewstar:1290809258149023815>`;
 		}
-		for (let i = 0; i < 5 - ratingStr.length; i++) {
+		for (let i = 0; i < 5 - rating; i++) {
 			ratingStr += `<:reviewemptystar:1290809298376462376>`;
 		}
 
