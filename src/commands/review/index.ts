@@ -141,8 +141,11 @@ export = {
 		const comment = interaction.options.get("comment", true)
 			.value as string;
 		let ratingStr = ``;
-		for (let i = 0; i <= rating; i++) {
-			ratingStr += `⭐`;
+		for (let i = 0; i < rating; i++) {
+			ratingStr += `<:reviewstar:1290809258149023815>`;
+		}
+		for (let i = 0; i < 5 - ratingStr.length; i++) {
+			ratingStr += `<:reviewemptystar:1290809298376462376>`;
 		}
 
 		const embed = new EmbedBuilder()
