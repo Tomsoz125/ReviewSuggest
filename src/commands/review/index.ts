@@ -95,9 +95,29 @@ export = {
 			);
 		}
 
-		const channel = await interaction.guild.channels.fetch(
-			guildConfig.reviewChannel
-		);
+		try {
+			var channel = await interaction.guild.channels.fetch(
+				guildConfig.reviewChannel
+			);
+		} catch (e) {
+			return await interaction.editReply(
+				getErrorEmbed(
+					interaction as Interaction,
+					name,
+					`❌ ${await getCommandLink({
+						client,
+						command: "/review",
+						guild: interaction.guild
+					})} is not properly configured on this server!\nRun ${await getCommandLink(
+						{
+							client,
+							command: "/config review",
+							guild: interaction.guild
+						}
+					)} to set it up!`
+				)
+			);
+		}
 		if (!channel || channel.type !== ChannelType.GuildText) {
 			return await interaction.editReply(
 				getErrorEmbed(

@@ -87,9 +87,29 @@ export = {
 			);
 		}
 
-		const channel = await interaction.guild.channels.fetch(
-			guildConfig.suggestionChannel
-		);
+		try {
+			var channel = await interaction.guild.channels.fetch(
+				guildConfig.suggestionChannel
+			);
+		} catch (e) {
+			return await interaction.editReply(
+				getErrorEmbed(
+					interaction as Interaction,
+					name,
+					`❌ ${await getCommandLink({
+						client,
+						command: "/suggest",
+						guild: interaction.guild
+					})} is not properly configured on this server!\nRun ${await getCommandLink(
+						{
+							client,
+							command: "/config suggest channel",
+							guild: interaction.guild
+						}
+					)} to set it up!`
+				)
+			);
+		}
 		if (!channel || channel.type !== ChannelType.GuildText) {
 			return await interaction.editReply(
 				getErrorEmbed(
